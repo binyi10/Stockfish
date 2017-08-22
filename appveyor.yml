@@ -16,7 +16,7 @@ platform:
   - Any CPU
 
 # build Configuration, i.e. Debug, Release, etc.
-configuration: Debug
+configuration: Release
 
 matrix:
   # The build fail immediately once one of the job fails
@@ -50,13 +50,13 @@ before_build:
       $b = git log HEAD | sls "\b[Bb]ench[ :]+[0-9]{7}" | select -first 1
       $bench = $b -match '\D+(\d+)' | % { $matches[1] }
       Write-Host "Reference bench:" $bench
+  - cmake -G "Visual Studio 14 2015 Win64" .
 
 build_script:
-  - cmake -G "Visual Studio 14 2015 Win64" .
-  - cmake --build .
+  - cmake --build . --config Release
 
 before_test:
-  - cd src/Debug
+  - cd src/Release
   - ps: |
       # Verify bench number
       ./stockfish bench 2> out.txt 1> null
